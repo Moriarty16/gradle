@@ -30,15 +30,16 @@ public class ReportGenerator {
     public static void main(String... args) throws Exception {
         Class<?> resultStoreClass = Class.forName(args[0]);
         File outputDirectory = new File(args[1]);
+        File resultJson = new File(args[2]);
         ResultsStore resultStore = (ResultsStore) resultStoreClass.newInstance();
         try {
-            new ReportGenerator().generate(resultStore, outputDirectory);
+            new ReportGenerator().generate(resultStore, outputDirectory, resultJson);
         } finally {
             resultStore.close();
         }
     }
 
-    void generate(final ResultsStore store, File outputDirectory) {
+    void generate(final ResultsStore store, File outputDirectory, File resultJson) {
         try {
             FileRenderer fileRenderer = new FileRenderer();
             TestPageGenerator testHtmlRenderer = new TestPageGenerator();
@@ -48,7 +49,7 @@ public class ReportGenerator {
                 new NavigationItem("Overview", "index.html"),
                 new NavigationItem("Graphs", "graph-index.html")
             );
-            fileRenderer.render(store, new IndexPageGenerator(navigationItems), new File(outputDirectory, "index.html"));
+            fileRenderer.render(store, new IndexPageGenerator(navigationItems, resultJson), new File(outputDirectory, "index.html"));
             fileRenderer.render(store, new GraphIndexPageGenerator(navigationItems), new File(outputDirectory, "graph-index.html"));
 
             File testsDir = new File(outputDirectory, "tests");
