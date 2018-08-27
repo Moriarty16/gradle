@@ -47,6 +47,7 @@ import org.gradle.api.internal.tasks.execution.SkipOnlyIfTaskExecuter;
 import org.gradle.api.internal.tasks.execution.SkipTaskWithNoActionsExecuter;
 import org.gradle.api.internal.tasks.execution.SkipUpToDateTaskExecuter;
 import org.gradle.api.internal.tasks.execution.TaskOutputChangesListener;
+import org.gradle.api.internal.tasks.execution.TimeoutTaskExecuter;
 import org.gradle.api.internal.tasks.execution.ValidatingTaskExecuter;
 import org.gradle.api.internal.tasks.properties.PropertyWalker;
 import org.gradle.api.internal.tasks.properties.annotations.FileFingerprintingPropertyAnnotationHandler;
@@ -91,6 +92,8 @@ import org.gradle.util.GradleVersion;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
 import static org.gradle.cache.internal.filelock.LockOptionsBuilder.mode;
 
@@ -114,7 +117,8 @@ public class TaskExecutionServices {
                                     TaskExecutionGraphInternal taskExecutionGraph,
                                     BuildInvocationScopeId buildInvocationScopeId,
                                     BuildCancellationToken buildCancellationToken,
-                                    TaskExecutionListener taskExecutionListener
+                                    TaskExecutionListener taskExecutionListener,
+                                    ScheduledExecutorService scheduledExecutorService
     ) {
 
         boolean buildCacheEnabled = buildCacheController.isEnabled();
@@ -129,6 +133,7 @@ public class TaskExecutionServices {
             buildInvocationScopeId,
             buildCancellationToken
         );
+        executer = new TimeoutTaskExecuter(executer, scheduledExecutorService);
         executer = new OutputDirectoryCreatingTaskExecuter(executer);
         if (buildCacheEnabled) {
             executer = new SkipCachedTaskExecuter(
@@ -153,6 +158,10 @@ public class TaskExecutionServices {
         executer = new CatchExceptionTaskExecuter(executer);
         executer = new EventFiringTaskExecuter(buildOperationExecutor, taskExecutionListener, executer);
         return executer;
+    }
+
+    ScheduledExecutorService createScheduledExecutorService() {
+        return Executors.newScheduledThreadPool(1);
     }
 
     TaskHistoryStore createCacheAccess(Gradle gradle, CacheRepository cacheRepository, InMemoryCacheDecoratorFactory inMemoryCacheDecoratorFactory) {

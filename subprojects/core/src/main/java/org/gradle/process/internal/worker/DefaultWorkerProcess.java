@@ -217,13 +217,13 @@ public class DefaultWorkerProcess implements WorkerProcess {
         CompositeStoppable stoppable;
         lock.lock();
         try {
-            stoppable = CompositeStoppable.stoppable(acceptor, connection);
+            stoppable = CompositeStoppable.stoppable(acceptor, connection, execHandle);
         } finally {
             this.connection = null;
             this.acceptor = null;
+            this.execHandle = null;
             lock.unlock();
         }
         stoppable.stop();
-        execHandle.abort();
     }
 }

@@ -22,6 +22,7 @@ import org.gradle.api.logging.Logger;
 import org.gradle.api.logging.Logging;
 import org.gradle.initialization.BuildCancellationToken;
 import org.gradle.internal.UncheckedException;
+import org.gradle.internal.concurrent.Stoppable;
 import org.gradle.internal.event.ListenerBroadcast;
 import org.gradle.internal.nativeintegration.services.NativeServices;
 import org.gradle.internal.operations.CurrentBuildOperationPreservingRunnable;
@@ -58,7 +59,7 @@ import static java.lang.String.format;
  * <li>{@link #abort()} allowed when state is STARTED or DETACHED</li>
  * </ul>
  */
-public class DefaultExecHandle implements ExecHandle, ProcessSettings {
+public class DefaultExecHandle implements ExecHandle, ProcessSettings, Stoppable {
 
     private static final Logger LOGGER = Logging.getLogger(DefaultExecHandle.class);
 
@@ -260,7 +261,8 @@ public class DefaultExecHandle implements ExecHandle, ProcessSettings {
                 try {
                     stateChanged.await();
                 } catch (InterruptedException e) {
-                    //ok, wrapping up
+                    execHandleRunner.abortProcess();
+                    throw UncheckedException.throwAsUncheckedException(e);
                 }
             }
 
@@ -299,7 +301,8 @@ public class DefaultExecHandle implements ExecHandle, ProcessSettings {
                 try {
                     stateChanged.await();
                 } catch (InterruptedException e) {
-                    //ok, wrapping up...
+                    Thread.currentThread().interrupt();
+                    execHandleRunner.abortProcess();
                     throw UncheckedException.throwAsUncheckedException(e);
                 }
             }
@@ -373,6 +376,11 @@ public class DefaultExecHandle implements ExecHandle, ProcessSettings {
 
     public int getTimeout() {
         return timeoutMillis;
+    }
+
+    @Override
+    public void stop() {
+        abort();
     }
 
     private static class ExecResultImpl implements ExecResult {

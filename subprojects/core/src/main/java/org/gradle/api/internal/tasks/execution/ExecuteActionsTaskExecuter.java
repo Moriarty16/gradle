@@ -75,6 +75,7 @@ public class ExecuteActionsTaskExecuter implements TaskExecuter {
         state.setExecuting(true);
         try {
             GradleException failure = executeActions(task, state, context);
+            clearInterruptStatus();
             if (failure != null) {
                 state.setOutcome(failure);
             } else {
@@ -87,6 +88,10 @@ public class ExecuteActionsTaskExecuter implements TaskExecuter {
             state.setExecuting(false);
             listener.afterActions(task);
         }
+    }
+
+    private void clearInterruptStatus() {
+        Thread.interrupted();
     }
 
     private GradleException executeActions(TaskInternal task, TaskStateInternal state, TaskExecutionContext context) {

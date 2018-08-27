@@ -170,6 +170,7 @@ public class ForkingTestClassProcessor implements TestClassProcessor {
             stoppedNow = true;
             if (remoteProcessor != null) {
                 workerProcess.stopNow();
+                completion.leaseFinish();
             }
         } finally {
             lock.unlock();

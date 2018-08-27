@@ -186,6 +186,7 @@ public class AsyncDispatch<T> implements Dispatch<T>, AsyncStoppable {
                         "Cannot wait for messages to be dispatched, as there are no dispatch threads running.");
             }
         } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
             throw new UncheckedException(e);
         } finally {
             lock.unlock();
