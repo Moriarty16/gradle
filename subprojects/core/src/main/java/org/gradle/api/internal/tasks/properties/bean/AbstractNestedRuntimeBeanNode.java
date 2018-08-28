@@ -33,7 +33,7 @@ import org.gradle.api.provider.Provider;
 import org.gradle.api.tasks.Optional;
 import org.gradle.internal.Factory;
 import org.gradle.internal.UncheckedException;
-import org.gradle.util.DeferredUtil;
+import org.gradle.api.internal.DeferredUtil;
 import org.gradle.util.DeprecationLogger;
 
 import javax.annotation.Nullable;

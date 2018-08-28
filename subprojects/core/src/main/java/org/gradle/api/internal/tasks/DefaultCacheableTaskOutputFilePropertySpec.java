@@ -19,7 +19,7 @@ package org.gradle.api.internal.tasks;
 import org.gradle.api.NonNullApi;
 import org.gradle.api.file.FileCollection;
 import org.gradle.internal.file.PathToFileResolver;
-import org.gradle.util.DeferredUtil;
+import org.gradle.api.internal.DeferredUtil;
 
 import java.io.File;
 

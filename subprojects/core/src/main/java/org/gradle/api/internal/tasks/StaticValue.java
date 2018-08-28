@@ -16,7 +16,7 @@
 
 package org.gradle.api.internal.tasks;
 
-import org.gradle.util.DeferredUtil;
+import org.gradle.api.internal.DeferredUtil;
 
 public class StaticValue implements ValidatingValue {
     private final Object value;

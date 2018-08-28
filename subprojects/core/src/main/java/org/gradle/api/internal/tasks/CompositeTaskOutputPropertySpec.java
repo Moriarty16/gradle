@@ -26,7 +26,7 @@ import org.gradle.api.internal.file.FileCollectionVisitor;
 import org.gradle.api.internal.file.FileResolver;
 import org.gradle.api.internal.file.FileTreeInternal;
 import org.gradle.api.internal.file.collections.DirectoryFileTree;
-import org.gradle.util.DeferredUtil;
+import org.gradle.api.internal.DeferredUtil;
 
 import java.io.File;
 import java.util.Iterator;

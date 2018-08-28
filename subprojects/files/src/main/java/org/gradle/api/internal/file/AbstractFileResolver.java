@@ -29,7 +29,7 @@ import org.gradle.internal.nativeintegration.filesystem.FileSystem;
 import org.gradle.internal.typeconversion.NotationParser;
 import org.gradle.internal.typeconversion.UnsupportedNotationException;
 import org.gradle.util.CollectionUtils;
-import org.gradle.util.DeferredUtil;
+import org.gradle.api.internal.DeferredUtil;
 
 import javax.annotation.Nullable;
 import java.io.File;
