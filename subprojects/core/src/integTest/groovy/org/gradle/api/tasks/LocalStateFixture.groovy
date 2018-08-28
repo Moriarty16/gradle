@@ -16,6 +16,8 @@
 
 package org.gradle.api.tasks
 
+import org.gradle.api.internal.DeferredUtil
+
 class LocalStateFixture {
     static String defineTaskWithLocalState(boolean useRuntimeApi, localStateFile = 'file("local-state.json")') {
         def action = """
@@ -26,7 +28,7 @@ class LocalStateFixture {
                 assert !localStateFile.exists()
             }
             project.file("build/output.txt").text = "Output"
-            localStateFile = org.gradle.util.DeferredUtil.unpack(localStateFile)
+            localStateFile = ${DeferredUtil.name}.unpack(localStateFile)
             if (localStateFile != null) {
                 localStateFile.text = "['Some internal state']"
             }
